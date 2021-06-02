@@ -1,21 +1,9 @@
-interface IVec2 {
-  x: number;
-  y:number;
-}
+import CanvasMouseEvent from './canvasMouseEvent';
+import CanvasKeyBoardEvent from './cavasKeyBoardEvent';
+import Vec2 from './utils/Vec2';
 
-interface ICanvasMouseEvent {
-  button: number;
-  canvasPosition: IVec2;
-  localPosition: IVec2;
-}
 
-interface ICanvasKeyBoardEvent  {
-  key: string;
-  keyCode: number;
-  repeat: boolean;
-}
-
-export default class CanvasApplication {
+class CanvasApplication implements EventListenerObject {
   public canvas!: HTMLCanvasElement | null;
   public isSupportMouseMove!: boolean;
 
@@ -61,13 +49,87 @@ export default class CanvasApplication {
   public render(): void {};
   public showFPS(show: boolean): void {};
 
-  protected dispatchMouseDown(evt: ICanvasMouseEvent): void {};
-  protected dispatchMouseUp(evt:ICanvasMouseEvent): void {};
-  protected dispatchMouseNove(evt: ICanvasMouseEvent): void {};
-  protected dispatchMouseDrag(evt: ICanvasMouseEvent): void {};
-  protected dispatchKeyDown(evt: ICanvasKeyBoardEvent): void {};
-  protected dispatchKeyUIp(evt: ICanvasKeyBoardEvent): void {};
-  protected dispatchKeyPress(evt: ICanvasKeyBoardEvent): void {};
+  private _viewportPos2CanvasPos(evt: MouseEvent) {
+    if (!this.canvas) throw new Error('canvas is not an element');
+    const bounds: ClientRect = this.canvas.getBoundingClientRect();
+    if (evt.type === 'mousedown') {
+      console.log(evt.clientX, evt.clientY);
+      console.log(bounds);
+    }
+    const x = evt.clientX - bounds.left;
+    const y = evt.clientY - bounds.top;
+    return Vec2.create(x, y);
+  }
+
+  private _event2CanvasMouseEvent(evt: Event): CanvasMouseEvent {
+    const event = evt as MouseEvent;
+    const bounds = this._viewportPos2CanvasPos(event);
+    const canvasEvt = new CanvasMouseEvent(
+      bounds,
+      event.button,
+      event.altKey,
+      event.shiftKey,
+      event.ctrlKey
+    );
+    return canvasEvt;
+  }
+
+  private _event2CanvasKeyBoardEvent(evt: Event): CanvasKeyBoardEvent {
+    let event = evt as KeyboardEvent;
+    const canvasEvt = new CanvasKeyBoardEvent(
+      event.key,
+      event.code,
+      event.altKey,
+      event.shiftKey,
+      event.ctrlKey
+    );
+    return canvasEvt;
+  }
+
+  public handleEvent(evt: Event): void {
+    switch(evt.type) {
+      case 'mousedown':
+        this.dispatchMouseDown(
+          this._event2CanvasMouseEvent(evt)
+        );
+        break;
+      case 'mouseup':
+        this.dispatchMouseUp(
+          this._event2CanvasMouseEvent(evt)
+        );
+        break;
+      case 'mousemove':
+        this.dispatchMouseUp(
+          this._event2CanvasMouseEvent(evt)
+        );
+        break;
+      // case 'mousesdrag'
+      case 'keydown':
+        this.dispatchKeyDown(
+          this._event2CanvasKeyBoardEvent(evt)
+        );
+        break;
+      case 'keyup':
+        this.dispatchKeyUp(
+          this._event2CanvasKeyBoardEvent(evt)
+        );
+        break;
+      case 'keypress':
+        this.dispatchKeyPress(
+          this._event2CanvasKeyBoardEvent(evt)
+        );
+        break;
+
+    }
+  }
+
+  protected dispatchMouseDown(evt: CanvasMouseEvent): void {};
+  protected dispatchMouseUp(evt:CanvasMouseEvent): void {};
+  protected dispatchMouseMove(evt: CanvasMouseEvent): void {};
+  protected dispatchMouseDrag(evt: CanvasMouseEvent): void {};
+  protected dispatchKeyDown(evt: CanvasKeyBoardEvent): void {};
+  protected dispatchKeyUp(evt: CanvasKeyBoardEvent): void {};
+  protected dispatchKeyPress(evt: CanvasKeyBoardEvent): void {};
 }
 
-// export default Application;
+export default CanvasApplication;
