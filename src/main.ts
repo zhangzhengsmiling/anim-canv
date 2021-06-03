@@ -1,11 +1,4 @@
-import CanvasApplication from './application';
+import CanvasApplication from './application/Application';
 
-const app = new CanvasApplication();
-app.start();
-
-setTimeout(() =>{
-  app.stop();
-}, 3000)
-
-
-console.log('hello, this is test')
+const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+const app = new CanvasApplication(canvas as HTMLCanvasElement);

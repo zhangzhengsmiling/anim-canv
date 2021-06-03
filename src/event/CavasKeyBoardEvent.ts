@@ -1,4 +1,4 @@
-import CanvasInputEvent, { EInputEventType } from './canvasInputEvent';
+import CanvasInputEvent, { EInputEventType } from './CanvasInputEvent';
 
 class CanvasKeyBoardEvent extends CanvasInputEvent {
   public key: string;

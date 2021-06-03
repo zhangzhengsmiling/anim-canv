@@ -1,6 +1,6 @@
-import CanvasMouseEvent from './canvasMouseEvent';
-import CanvasKeyBoardEvent from './cavasKeyBoardEvent';
-import Vec2 from './utils/Vec2';
+import CanvasMouseEvent from '../event/CanvasMouseEvent';
+import CanvasKeyBoardEvent from '../event/CavasKeyBoardEvent';
+import Vec2 from '../utils/Vec2';
 
 
 class CanvasApplication implements EventListenerObject {
@@ -12,6 +12,17 @@ class CanvasApplication implements EventListenerObject {
   private elapsedMsec: number = 0;
   private diffMsec: number = 0;
   private startTime: number = 0;
+
+  public constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    window.addEventListener('mousedown', this, false);
+    window.addEventListener('mousemove', this, false);
+    window.addEventListener('mouseup', this, false);
+    window.addEventListener('keydown', this, false);
+    window.addEventListener('keypress', this, false);
+    window.addEventListener('keyup', this, false);
+
+  }
   
   public start(): void {
     if (!this.isRunning) {
@@ -119,7 +130,6 @@ class CanvasApplication implements EventListenerObject {
           this._event2CanvasKeyBoardEvent(evt)
         );
         break;
-
     }
   }
 
