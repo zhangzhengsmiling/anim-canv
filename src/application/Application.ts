@@ -54,7 +54,7 @@ class CanvasApplication implements EventListenerObject {
   }
 
   public update(elapsedMsec: number, diffMsec: number): void {
-    console.log('update ...')
+    throw new Error('update of Application abstract is invoked, sub class need to override update method...')
   };
 
   public render(): void {};
