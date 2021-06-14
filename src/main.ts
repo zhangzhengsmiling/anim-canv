@@ -1,10 +1,6 @@
 import Canvas2DApplication from './application/Canvas2DApplication';
+import { EnumColor } from './utils/Color';
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-
-const img = new Image();
-img.src = 'https://p1.ssl.qhimg.com/dr/270_500_/t0199ef6050dfe5064e.jpg?size=707x1183';
-img.width = 707;
-img.height = 1183;
 
 class Application extends Canvas2DApplication {
   constructor(canvas: HTMLCanvasElement) {
@@ -15,42 +11,41 @@ class Application extends Canvas2DApplication {
     const { context2D } = this;
     if (!context2D) throw new Error('get content error...');
     context2D.save();
-    context2D.fillStyle = config.fillStyle || 'orange';
-    context2D.strokeStyle = config.strokeStyle || 'red';
-    context2D.fillRect(x, y, width, height);
+    context2D.fillStyle = config.fillStyle;
+    context2D.strokeStyle = config.strokeStyle || EnumColor.PURPLE;
+    context2D.lineWidth = config.lineWidth;
+    // context2D.rect(x, y, width, height);
+    context2D.beginPath();
+    context2D.moveTo(x, y);
+    context2D.lineTo(x + width, y);
+    context2D.lineTo(x + width, y + height);
+    context2D.lineTo(x, y + height);
+    context2D.closePath();
+    context2D.stroke()
+    if (config.fillStyle)
+      context2D.fill();
     context2D.restore();
   }
+
+  private lineDashOffset: number = 10;
 
   update(elapsedMsec: number) {
     const { context2D } = this;
     if (!context2D) throw new Error('get content error...');
     context2D.clearRect(0, 0, canvas.width, canvas.height);
-    context2D.fillStyle = 'orange';
-    let speed = 10;
-    const t = elapsedMsec / 1000;
 
-    this.drawRect(t * speed,10, 100, 20);
-    this.drawRect(t * speed, t * speed, 40, 20, { fillStyle: 'green' });
-    this.drawRect(10, t * speed, 60, 30);
-    
-    context2D.drawImage(img, 0,0, img.width / 10, img.height / 10);
-    const image = context2D.getImageData(0, 0, img.width/10, img.height / 10);
-    console.log(image);
-    const nd = image.data.map((atomic, index) => {
-      if (index % 4 === 3) {
-        return 255;
-      } else {
-        return atomic
-      }
-    });
-    const imageData = context2D.createImageData({
-      data: nd,
-      width: img.width / 10,
-      height: img.height / 10
-    })
-    // const _img = new Image();
-    context2D.putImageData(imageData, 0, 0)
+    context2D.setLineDash([10, 5]);
+    context2D.lineDashOffset = this.lineDashOffset;
+    this.lineDashOffset = (this.lineDashOffset - 1) % 1000;
+    this.drawRect(100, 100, 100, 200, { lineWidth: 2 });
 
+    // context2D.fillStyle = 'orange';
+    // let speed = 10;
+    // const t = elapsedMsec / 1000;
+
+    // this.drawRect(t * speed,10, 100, 20);
+    // this.drawRect(t * speed, t * speed, 40, 20, { fillStyle: 'green' });
+    // this.drawRect(10, t * speed, 60, 30);
   }
 
   moveX(x: number, y: number, speed: number, borderX: number) {
@@ -79,6 +74,3 @@ init(canvas);
 
 const app = new Application(canvas);
 app.start()
-
-console.log('hello, world');
-console.log('ERROR')
