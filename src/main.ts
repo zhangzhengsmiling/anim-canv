@@ -110,32 +110,73 @@ class Application extends Canvas2DApplication {
     context2D.restore();
   }
 
+  drawGrid(options: any = {}, config: RenderConfig = {}) {
+    const { context2D } = this;
+    if(!context2D) throw new Error('get context error...');
+    decratorContext2D(context2D, config);
+    context2D.save();
+    const {
+      width = 800,
+      height = 600,
+      ptr = new Vec2(0, 0),
+      gridWidth = 20,
+      gridHeight = 10,
+    } = options;
+
+    for(let i = 0; i < height / gridHeight; i++) {
+      this.drawLine(
+        new Vec2(0, i * gridHeight),
+        new Vec2(width, i * gridHeight),
+        config
+      )
+    }
+    this.drawLine(
+      new Vec2(width, 0),
+      new Vec2(width, height),
+      config
+    );
+    for(let j = 0; j < width / gridWidth; j++) {
+      this.drawLine(
+        new Vec2(j * gridWidth, 0),
+        new Vec2(j * gridWidth, height),
+        config
+      )
+    }
+    this.drawLine(
+      new Vec2(0, height),
+      new Vec2(width, height),
+      config
+    )
+    actionContext2D(context2D, config);
+    context2D.restore();
+  }
+
+
   private lineDashOffset: number = 10;
 
   update(elapsedMsec: number) {
     const { context2D } = this;
     if (!context2D) throw new Error('get context error...');
+    context2D.strokeStyle = EnumColor.BLACK;
     context2D.clearRect(0, 0, canvas.width, canvas.height);
-
-    // context2D.strokeStyle = 'red'
     this.lineDashOffset = (this.lineDashOffset - 1) % 1000;
     this.drawRect(100, 100, 100, 200, {
       lineWidth: 2,
       lineDash: [10, 5],
       lineDashOffset: (this.lineDashOffset - 1) % 1000,
-      // strokeStyle: EnumColor.PURPLE
     });
-    this.drawCircle(400, 400, 20, 0, Math.PI * 2, {
-      // strokeStyle: 'orange'
-    });
+    this.drawCircle(400, 400, 20, 0, Math.PI * 2);
     this.drawLine(
       new Vec2(342, 200),
-      new Vec2(544, 333),
-      {
-        // strokeStyle: 'orange'
-      }
+      new Vec2(544, 333)
     );
+    this.drawGrid(undefined, {
+      lineWidth: 1,
+      strokeStyle: EnumColor.ORANGE,
+      lineDash: [4, 1]
+    });
   }
+
 
   moveX(x: number, y: number, speed: number, borderX: number) {
     if (x < borderX) {
