@@ -159,17 +159,36 @@ class Application extends Canvas2DApplication {
     context2D.strokeStyle = EnumColor.BLACK;
     context2D.clearRect(0, 0, canvas.width, canvas.height);
     this.lineDashOffset = (this.lineDashOffset - 1) % 1000;
+    const linearGradient = context2D.createLinearGradient(
+      100, 100, 200, 300
+    );
+    linearGradient.addColorStop(0, EnumColor.PURPLE);
+    linearGradient.addColorStop(1, EnumColor.RED);
+
     this.drawRect(100, 100, 100, 200, {
       lineWidth: 2,
       lineDash: [10, 5],
       lineDashOffset: (this.lineDashOffset - 1) % 1000,
+      fillStyle: linearGradient,
+      strokeStyle: EnumColor.PURPLE
+    });
+
+
+    const radiaGradient = context2D.createRadialGradient(
+      400, 400, 0, 400, 400, 100
+    );
+    radiaGradient.addColorStop(0, EnumColor.YELLO);
+    radiaGradient.addColorStop(1, EnumColor.FUCHSIA);
+
+    this.drawCircle(400, 400, 100, 0, Math.PI *2,{
+      fillStyle: radiaGradient  
     });
     this.drawCircle(
       400, 400, 20, 0, Math.PI * 2,
       {
         lineDash: [10, 5]
       }
-      );
+    );
     this.drawLine(
       new Vec2(342, 200),
       new Vec2(544, 333),
