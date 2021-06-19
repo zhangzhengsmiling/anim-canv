@@ -10,6 +10,9 @@ interface RenderConfig {
   lineCap?: CanvasLineCap;
   lineDash?: number[];
   lineDashOffset?: number;
+  font?: string;
+  textAlign?: CanvasTextAlign;
+  textBaseLine?: CanvasTextBaseline;
 }
 
 const decratorContext2D = (
@@ -23,6 +26,9 @@ const decratorContext2D = (
     lineCap,
     lineDash,
     lineDashOffset,
+    font,
+    textAlign,
+    textBaseLine,
   } = renderConfig;
   if(fillStyle)
     context.fillStyle = fillStyle;
@@ -36,6 +42,13 @@ const decratorContext2D = (
     context.setLineDash(lineDash);
   if(lineDashOffset)
     context.lineDashOffset = lineDashOffset;
+  if(font)
+    context.font = font;
+  if(textAlign)
+    context.textAlign = textAlign;
+  if(textBaseLine)
+    context.textBaseline = textBaseLine;
+    
 }
 const actionContext2D = (
   context: CanvasRenderingContext2D,
@@ -151,6 +164,21 @@ class Application extends Canvas2DApplication {
     context2D.restore();
   }
 
+  drawText(text: string, position: Vec2, config: RenderConfig = {}) {
+    const { context2D } = this;
+    if(!context2D) throw new Error('get context error...');
+    context2D.save();
+    decratorContext2D(context2D, config);
+    if(context2D.strokeStyle)
+      context2D.strokeText(text, position.x, position.y);
+    if(
+      context2D.fillStyle ||
+      (!context2D.strokeStyle && context2D.fillStyle)
+    )
+      context2D.fillText(text, position.x, position.y);
+    context2D.restore();
+  }
+
   private lineDashOffset: number = 10;
 
   update(elapsedMsec: number) {
@@ -193,6 +221,11 @@ class Application extends Canvas2DApplication {
       new Vec2(342, 200),
       new Vec2(544, 333),
     );
+    this.drawText('hello, world', new Vec2(600, 400), {
+      font: '40px Arial',   
+      fillStyle: EnumColor.YELLO,
+      strokeStyle: EnumColor.BLACK,
+    })
     this.drawGrid({
       ptr: new Vec2(0, 0),
       width: this.canvas?.width,
@@ -203,7 +236,6 @@ class Application extends Canvas2DApplication {
       lineDash: [5, 10]
     });
   }
-
 }
 
 const init = (canvas: HTMLCanvasElement) => {
