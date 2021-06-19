@@ -1,6 +1,7 @@
 import Canvas2DApplication from './application/Canvas2DApplication';
 import { EnumColor } from './utils/Color';
 import Vec2 from './utils/Vec2';
+import Font from './utils/Font';
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
 interface RenderConfig {
@@ -205,7 +206,7 @@ class Application extends Canvas2DApplication {
     const radiaGradient = context2D.createRadialGradient(
       400, 400, 0, 400, 400, 100
     );
-    radiaGradient.addColorStop(0, EnumColor.YELLO);
+    radiaGradient.addColorStop(0, EnumColor.YELLOW);
     radiaGradient.addColorStop(1, EnumColor.FUCHSIA);
 
     this.drawCircle(400, 400, 100, 0, Math.PI *2,{
@@ -221,9 +222,14 @@ class Application extends Canvas2DApplication {
       new Vec2(342, 200),
       new Vec2(544, 333),
     );
+
+    const font = new Font();
+    font.setFontSize('80px');
+    font.setFontStyle('italic');
+    console.log(font.toString());
     this.drawText('hello, world', new Vec2(600, 400), {
-      font: '40px Arial',   
-      fillStyle: EnumColor.YELLO,
+      font: font.toString(),
+      fillStyle: EnumColor.YELLOW,
       strokeStyle: EnumColor.BLACK,
     })
     this.drawGrid({

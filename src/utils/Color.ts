@@ -15,5 +15,5 @@ export enum EnumColor {
   SILVER = 'silver', // 银灰色
   TEAL = 'teal', // 蓝绿色
   WHITE = 'white', // 白色
-  YELLO = 'yellow', // 黄色
+  YELLOW = 'yellow', // 黄色
 }
