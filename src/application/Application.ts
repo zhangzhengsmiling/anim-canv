@@ -63,10 +63,6 @@ class CanvasApplication implements EventListenerObject {
   private _viewportPos2CanvasPos(evt: MouseEvent) {
     if (!this.canvas) throw new Error('canvas is not an element');
     const bounds: ClientRect = this.canvas.getBoundingClientRect();
-    if (evt.type === 'mousedown') {
-      console.log(evt.clientX, evt.clientY);
-      console.log(bounds);
-    }
     const x = evt.clientX - bounds.left;
     const y = evt.clientY - bounds.top;
     return Vec2.create(x, y);
