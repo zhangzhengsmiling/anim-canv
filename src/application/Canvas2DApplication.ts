@@ -13,6 +13,7 @@ class Canvas2DApplication extends CanvasApplication {
         '2d',
         contextAttributions
       ) as CanvasRenderingContext2D;
+    this.init();
   }
 }
 

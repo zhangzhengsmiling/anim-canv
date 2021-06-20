@@ -144,10 +144,15 @@ class Tank {
 class Application extends Canvas2DApplication {
 
   private tank: Tank = new Tank();
-
   constructor(canvas: HTMLCanvasElement) {
     super(canvas);
   }
+
+
+  init() {
+
+  }
+  
 
   drawRect(x: number, y: number,width:number, height: number, config: RenderConfig = {}) {
     const { context2D } = this;
@@ -345,7 +350,6 @@ class Application extends Canvas2DApplication {
   transform(context2D: CanvasRenderingContext2D, elapsedMsec: number) {
     context2D.save();
     context2D.translate(this.pos_x, this.pos_y);
-    // context2D.rotate(elapsedMsec / 1000 * 100 / 180 * Math.PI);
     this.drawRect(-20, -30, 40, 60, {
       fillStyle: EnumColor.ORANGE,
     });

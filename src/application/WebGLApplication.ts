@@ -10,5 +10,6 @@ class WebGlApplication extends CanvasApplication {
     if (this.context3D === null) {
       throw new Error('无法创建WebGLRenderingContexts上下文对象');
     }
+    this.init();
   }
 }

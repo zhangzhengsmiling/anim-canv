@@ -21,8 +21,9 @@ class CanvasApplication implements EventListenerObject {
     window.addEventListener('keydown', this, false);
     window.addEventListener('keypress', this, false);
     window.addEventListener('keyup', this, false);
-
   }
+
+  protected init() {}
   
   public start(): void {
     if (!this.isRunning) {
