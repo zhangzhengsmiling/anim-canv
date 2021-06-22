@@ -87,7 +87,64 @@ const src = 'https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_
 const eleImage = document.createElement('img') as HTMLImageElement;
 eleImage.src = src;
 
+
+class Tank {
+  public turrentLength: number = 60;
+  public turrentRotation: number = 40;
+  public position: Vec2 = new Vec2(100, 100);
+  public width: number = 100;
+  public height: number = 60;
+
+  public onKeyDown(e: CanvasKeyBoardEvent) {
+    if(e.key === 'ArrowDown') {
+      this.position.y += 5;
+    }
+    if(e.key === 'ArrowUp') {
+      this.position.y -= 5;
+    }
+    if(e.key === 'ArrowLeft') {
+      this.position.x -= 5;
+    }
+    if(e.key === 'ArrowRight') {
+      this.position.x += 5;
+    }
+    if(e.key === 'w') {
+      this.turrentRotation += 3;
+    }
+    if(e.key === 's') {
+      this.turrentRotation -= 3;
+    }
+  }
+
+  render(context: CanvasRenderingContext2D) {
+    context.save();
+    context.translate(this.position.x, this.position.y);
+    context.arc(0, 0, 5, 0, Math.PI * 2);
+    context.fill();
+    context.save();
+    context.fillStyle = EnumColor.ORANGE;
+    context.rect(-this.width * 0.5, -this.height * 0.5, this.width, this.height);
+    context.fill();
+    context.restore();
+    context.save();
+    context.rotate(this.turrentRotation / 180 * Math.PI);
+    context.lineWidth = 5;
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.lineTo(this.turrentLength, 0);
+    context.closePath();
+    context.stroke();
+    context.restore();
+    context.restore();
+  }
+
+}
+
+
 class Application extends Canvas2DApplication {
+
+  private tank: Tank = new Tank();
+
   constructor(canvas: HTMLCanvasElement) {
     super(canvas);
   }
@@ -273,22 +330,12 @@ class Application extends Canvas2DApplication {
     // this.draw(context2D);
     this.transform(context2D, elapsedMsec);
     this.transform2(context2D, elapsedMsec);
+    this.tank.render(context2D);
   }
 
   dispatchKeyDown(e: CanvasKeyBoardEvent) {
-    // console.log(e);
-    if(e.key === 'ArrowDown') {
-      this.pos_y += 3;
-    }
-    if(e.key === 'ArrowUp') {
-      this.pos_y -= 3;
-    }
-    if(e.key === 'ArrowLeft') {
-      this.pos_x -= 3;
-    }
-    if(e.key === 'ArrowRight') {
-      this.pos_x += 3;
-    }
+    this.tank.onKeyDown(e);
+    console.log(e.key);
   }
 
   pos_x = 0;
