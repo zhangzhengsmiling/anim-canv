@@ -3,85 +3,15 @@ import { EnumColor } from './utils/Color';
 import Vec2 from './utils/Vec2';
 import Font from './utils/Font';
 import CanvasKeyBoardEvent from './event/CavasKeyBoardEvent';
+import Rectangle from './shape/Rectangle';
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-
-interface RenderConfig {
-  fillStyle?: string | CanvasGradient | CanvasPattern;
-  strokeStyle?: string | CanvasGradient | CanvasPattern;
-  lineWidth?: number;
-  lineCap?: CanvasLineCap;
-  lineDash?: number[];
-  lineDashOffset?: number;
-  font?: string;
-  textAlign?: CanvasTextAlign;
-  textBaseLine?: CanvasTextBaseline;
-  shadowColor?: string;
-  shadowBlur?: number;
-  shadowOffsetX?: number;
-  shadowOffsetY?: number;
-}
-
-const decratorContext2D = (
-  context: CanvasRenderingContext2D,
-  renderConfig: RenderConfig
-) => {
-  const {
-    fillStyle,
-    strokeStyle,
-    lineWidth,
-    lineCap,
-    lineDash,
-    lineDashOffset,
-    font,
-    textAlign,
-    textBaseLine,
-    shadowColor,
-    shadowBlur,
-    shadowOffsetX,
-    shadowOffsetY,
-  } = renderConfig;
-  if(fillStyle)
-    context.fillStyle = fillStyle;
-  if(strokeStyle)
-    context.strokeStyle = strokeStyle;
-  if(lineWidth)
-    context.lineWidth = lineWidth;
-  if(lineCap)
-    context.lineCap = lineCap;
-  if(lineDash)
-    context.setLineDash(lineDash);
-  if(lineDashOffset)
-    context.lineDashOffset = lineDashOffset;
-  if(font)
-    context.font = font;
-  if(textAlign)
-    context.textAlign = textAlign;
-  if(textBaseLine)
-    context.textBaseline = textBaseLine;
-  if(shadowColor)
-    context.shadowColor = shadowColor;
-  if(shadowBlur)
-    context.shadowBlur = shadowBlur;
-  if(shadowOffsetX)
-    context.shadowOffsetX = shadowOffsetX;
-  if(shadowOffsetY)
-    context.shadowOffsetY = shadowOffsetY;
-  
-}
-const actionContext2D = (
-  context: CanvasRenderingContext2D,
-  renderConfig: RenderConfig
-) => {
-  if(renderConfig.fillStyle) {
-    context.fill();
-  }
-  if(
-    renderConfig.strokeStyle ||
-    (!renderConfig.strokeStyle && !renderConfig.fillStyle)
-  ) {
-    context.stroke();
-  }
-}
+import {
+  RenderConfig,
+  decratorContext2D,
+  actionContext2D,
+} from './utils/RenderConfig';
+import Circle from './shape/Circle';
+import StraightLine from './shape/Line';
 
 const src = 'https://img.iplaysoft.com/wp-content/uploads/2019/free-images/free_stock_photo.jpg';
 const eleImage = document.createElement('img') as HTMLImageElement;
@@ -141,6 +71,7 @@ class Tank {
 }
 
 
+
 class Application extends Canvas2DApplication {
 
   private tank: Tank = new Tank();
@@ -153,8 +84,7 @@ class Application extends Canvas2DApplication {
 
   }
   
-
-  drawRect(x: number, y: number,width:number, height: number, config: RenderConfig = {}) {
+  drawRect(x: number, y: number,width:number, height: number, config: Partial<RenderConfig> = {}) {
     const { context2D } = this;
     if (!context2D) throw new Error('get context error...');
     context2D.save();
@@ -175,7 +105,7 @@ class Application extends Canvas2DApplication {
     radius: number,
     startAngle: number,
     endAngle: number,
-    config: RenderConfig = {}
+    config: Partial<RenderConfig> = {}
   ) {
     const { context2D } = this;
     if (!context2D) throw new Error('get context error...');
@@ -194,7 +124,7 @@ class Application extends Canvas2DApplication {
     context2D.restore();
   }
 
-  drawLine(ptrBegin: Vec2, ptrEnd: Vec2, config: RenderConfig = {}) {
+  drawLine(ptrBegin: Vec2, ptrEnd: Vec2, config: Partial<RenderConfig> = {}) {
     const { context2D } = this;
     if (!context2D) throw new Error('get context error...');
     context2D.save();
@@ -207,7 +137,7 @@ class Application extends Canvas2DApplication {
     context2D.restore();
   }
 
-  drawGrid(options: any = {}, config: RenderConfig = {}) {
+  drawGrid(options: any = {}, config: Partial<RenderConfig> = {}) {
     const { context2D } = this;
     if(!context2D) throw new Error('get context error...');
     context2D.save();
@@ -248,7 +178,7 @@ class Application extends Canvas2DApplication {
     context2D.restore();
   }
 
-  drawText(text: string, position: Vec2, config: RenderConfig = {}) {
+  drawText(text: string, position: Vec2, config: Partial<RenderConfig> = {}) {
     const { context2D } = this;
     if(!context2D) throw new Error('get context error...');
     context2D.save();
@@ -331,39 +261,30 @@ class Application extends Canvas2DApplication {
     const { context2D } = this;
     if (!context2D) throw new Error('get context error...');
     context2D.strokeStyle = EnumColor.BLACK;
+  }
+
+  render() {
+    const { context2D } = this;
+    if (!context2D) throw new Error('get context error...');
     context2D.clearRect(0, 0, canvas.width, canvas.height);
-    // this.draw(context2D);
-    this.transform(context2D, elapsedMsec);
-    this.transform2(context2D, elapsedMsec);
-    this.tank.render(context2D);
+    const rect = new Rectangle(
+      new Vec2(200, 200),
+      100, 100,
+      { fillStyle: EnumColor.ORANGE }
+    )
+    rect.render(context2D);
+    const circle = new Circle(new Vec2(300, 300), 30, {});
+    circle.render(context2D);
+    const line = new StraightLine(
+      new Vec2(100, 100),
+      new Vec2(400, 320)
+    );
+    line.render(context2D);
   }
 
   dispatchKeyDown(e: CanvasKeyBoardEvent) {
     this.tank.onKeyDown(e);
     console.log(e.key);
-  }
-
-  pos_x = 0;
-  pos_y = 0;
-
-
-  transform(context2D: CanvasRenderingContext2D, elapsedMsec: number) {
-    context2D.save();
-    context2D.translate(this.pos_x, this.pos_y);
-    this.drawRect(-20, -30, 40, 60, {
-      fillStyle: EnumColor.ORANGE,
-    });
-    context2D.restore();
-
-  }
-
-  transform2(context2D: CanvasRenderingContext2D, elapsedMsec: number) {
-    context2D.save();
-    context2D.translate(this.pos_x, this.pos_y);
-    this.drawLine(new Vec2(0, 0), new Vec2(50, 0), {
-      lineWidth: 5
-    })
-    context2D.restore();
   }
 }
 
